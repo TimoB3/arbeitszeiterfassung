@@ -31,7 +31,8 @@ function netMinutes(day) {
   if (s === null || e === null) return null;
   let dur = e - s;
   if (dur <= 0) dur += 1440; // Ende nach Mitternacht
-  return Math.max(0, dur - (dur <= 360 ? 0 : (dur >= 540 ? 45 : 30)));
+  const pause = dur >= 540 ? 45 : (dur > 360 ? 30 : 0);
+  return Math.max(0, dur - pause);
 }
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
