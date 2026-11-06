@@ -31,7 +31,8 @@ function netMinutes(day) {
   if (s === null || e === null) return null;
   let dur = e - s;
   if (dur <= 0) dur += 1440; // Ende nach Mitternacht
-  return Math.max(0, dur - (dur <= 360 ? 0 : (dur > 540 ? 45 : 30)));
+  const pause = dur > 540 ? 45 : dur > 360 ? 30 : 0; // >9h: 45, >6h: 30, sonst 0
+  return Math.max(0, dur - pause);
 }
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
@@ -119,9 +120,9 @@ function buildPdf() {
   const y = current.getFullYear(), m = current.getMonth();
   const name = localStorage.getItem(NAME_KEY) || '';
   const n = new Date(y, m + 1, 0).getDate();
-  const rowH = ((297 - 20 - 18 - 7 - 1.5) / n).toFixed(3) + 'mm';
+  const rowH = ((297 - 20 - 18 - 7 - 1.5) / (n + 1)).toFixed(3) + 'mm';
   const cell = (cls, txt, span) => '<td' + (span ? ' colspan="' + span + '"' : '') + '><div class="c ' + cls + '" style="height:' + rowH + '"><span class="fit">' + txt + '</span></div></td>';
-  let rows = '';
+  let rows = '', sumMin = 0;
   for (let d = 1; d <= n; d++) {
     const date = new Date(y, m, d), dow = date.getDay(), day = days[iso(date)] || {};
     const tasks = esc(day.tasks).replace(/\s*\n+\s*/g, '; ');
@@ -131,12 +132,13 @@ function buildPdf() {
     } else {
       tk = tasks;
       const net = netMinutes(day);
-      if (day.start && day.end) { mid = cell('', esc(day.start)) + cell('', esc(day.end)); hrs = cell('', net === null ? '' : fmtH(net)); }
+      if (day.start && day.end) { mid = cell('', esc(day.start)) + cell('', esc(day.end)); hrs = cell('', net === null ? '' : fmtH(net)); sumMin += net || 0; }
       else if (day.note) { mid = cell('nw', esc(day.note), 2); hrs = cell('', ''); }
       else { mid = cell('', '') + cell('', ''); hrs = cell('', ''); }
     }
     rows += '<tr>' + cell('', d + '.') + mid + hrs + cell('tk', tk) + '</tr>';
   }
+  rows += '<tr class="sumrow">' + cell('', '') + cell('b nw', 'SUMME', 2) + cell('b', fmtH(sumMin)) + cell('tk', '') + '</tr>';
   const th = t => '<th><div class="c" style="height:7mm"><b>' + t + '</b></div></th>';
   $('printArea').innerHTML =
     '<div class="head"><h1>Arbeitszeiterfassung</h1><p>Monat: ' + MONTHS[m] + ' ' + y + '</p><p>Name: ' + esc(name) + '</p></div>' +
