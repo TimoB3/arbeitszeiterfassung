@@ -40,7 +40,7 @@ function netMinutes(day) {
   // 3. Ergebnis zurückgeben
   return Math.max(0, dur - berechnetePause);
 }
-}
+
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
 function isEditable(d) {
