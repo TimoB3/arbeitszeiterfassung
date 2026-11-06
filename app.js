@@ -62,6 +62,16 @@ mkTime($('start')); mkTime($('end'));
 
 let current = new Date();
 
+// Kette: 2. nur wenn 1. gesetzt, 3. nur wenn 1. und 2. gesetzt; Abwählen räumt die folgenden Felder ab
+function syncRk(ed) {
+  const p = $('rkPossible').checked;
+  if (!p) $('rkRequested').checked = false;
+  const r = $('rkRequested').checked;
+  if (!r) $('rkReceived').checked = false;
+  $('rkRequested').disabled = !ed || !p;
+  $('rkReceived').disabled = !ed || !(p && r);
+}
+
 function render() {
   const key = iso(current), day = days[key] || {};
   $('date').value = key;
@@ -72,12 +82,12 @@ function render() {
   $('note').value = day.note || '';
   $('rkPossible').checked = !!day.rkPossible;
   $('rkRequested').checked = !!(day.rkPossible && day.rkRequested);
-  $('rkRequested').disabled = !day.rkPossible;
+  $('rkReceived').checked = !!(day.rkPossible && day.rkRequested && day.rkReceived);
   const ed = isEditable(current);
   $('lock').hidden = ed;
   ['tasks','note','rkPossible'].forEach(id => $(id).disabled = !ed);
   $('start').dis(!ed); $('end').dis(!ed);
-  if (!ed) $('rkRequested').disabled = true;
+  syncRk(ed);
   const n = netMinutes(day);
   $('net').textContent = n === null ? '' : 'Nettoarbeitszeit: ' + fmt(n);
   renderMonth();
@@ -100,10 +110,10 @@ function save() {
     start: $('start').get(), end: $('end').get(),
     tasks: $('tasks').value, note: $('note').value,
     rkPossible: $('rkPossible').checked,
-    rkRequested: $('rkPossible').checked && $('rkRequested').checked
+    rkRequested: $('rkPossible').checked && $('rkRequested').checked,
+    rkReceived: $('rkPossible').checked && $('rkRequested').checked && $('rkReceived').checked
   };
-  $('rkRequested').disabled = !day.rkPossible;
-  if (!day.rkPossible) $('rkRequested').checked = false;
+  syncRk(true);
   const empty = !day.start && !day.end && !day.tasks && !day.note && !day.rkPossible;
   const key = iso(current);
   if (empty) delete days[key]; else days[key] = day;
@@ -155,7 +165,7 @@ function buildPdf() {
 /* ---------- Events ---------- */
 ['tasks','note'].forEach(id => $(id).addEventListener('input', save));
 $('date').addEventListener('click', () => { try { $('date').showPicker(); } catch (e) {} });
-['rkPossible','rkRequested'].forEach(id => $(id).addEventListener('change', save));
+['rkPossible','rkRequested','rkReceived'].forEach(id => $(id).addEventListener('change', save));
 $('prev').onclick = () => shift(-1);
 $('next').onclick = () => shift(1);
 $('date').onchange = e => { if (e.target.value) { current = fromIso(e.target.value); render(); } };
@@ -174,7 +184,7 @@ function sanitizeDay(x) {
   if (!x || typeof x !== 'object') return null;
   const s = v => typeof v === 'string' ? v : '';
   return { start: TIME_RE.test(x.start) ? x.start : '', end: TIME_RE.test(x.end) ? x.end : '', tasks: s(x.tasks), note: s(x.note),
-           rkPossible: !!x.rkPossible, rkRequested: !!(x.rkPossible && x.rkRequested) };
+           rkPossible: !!x.rkPossible, rkRequested: !!(x.rkPossible && x.rkRequested), rkReceived: !!(x.rkPossible && x.rkRequested && x.rkReceived) };
 }
 function showLastBackup() {
   const t = localStorage.getItem(BK_KEY);

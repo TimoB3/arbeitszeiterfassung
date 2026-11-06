@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.5
+ARBEITSZEITERFASSUNG (PWA) - Version 2.6
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -36,3 +36,9 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
   (am iPhone über das Teilen-Menü, z. B. in "Dateien" sichern). "Sicherung einlesen" lädt sie wieder; gleiche Tage werden überschrieben, alle anderen bleiben.
 - Beschriftung "Reisekosten ?".
 - Service Worker lädt Dateien zuerst aus dem Netz (neue Versionen kommen ohne Cache-Probleme an), offline weiter aus dem Zwischenspeicher.
+
+Änderungen 2.6:
+- Drei Checkboxen: "Reisekosten ?", "Beleg abgegeben?", "Betrag erhalten ?".
+- "Beleg abgegeben?" nur wählbar, wenn "Reisekosten ?" gesetzt ist; "Betrag erhalten ?" nur, wenn beide davor gesetzt sind.
+- Wird ein Feld abgewählt, werden die folgenden automatisch ebenfalls abgewählt.
+- Reisekosten-Angaben erscheinen weiterhin nicht im PDF.

@@ -23,6 +23,7 @@ nav{display:flex;gap:8px;align-items:center;margin-top:.5rem}
 .tsel select{flex:1;min-width:0;font-size:1.1rem;padding:.55rem .3rem;border:1px solid #bbb;border-radius:8px;background:#fff;font-family:inherit}
 .net{font-weight:600;min-height:1.4em;margin:.6rem 0 0}
 .chk{display:flex;align-items:center;gap:.6rem;font-size:1rem;color:#111}
+.chk:has(input:disabled){opacity:.5}
 .chk input{width:1.4rem;height:1.4rem}
 #lock{background:#fef3c7;padding:.5rem;border-radius:8px}
 #settings{background:#fff;padding:.5rem .8rem;border-radius:8px;margin-bottom:.5rem}
