@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arbeitszeit</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Arbeitszeit">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header><h1>Arbeitszeit</h1><button id="btnSettings" aria-label="Einstellungen">⚙</button></header>
+
+  <section id="settings" hidden>
+    <label>Name (für das PDF)
+      <input id="name" type="text" autocomplete="name">
+    </label>
+  </section>
+
+  <nav>
+    <button id="prev" aria-label="Vorheriger Tag">‹</button>
+    <label class="datebox"><span id="dateText"></span><input id="date" type="date"></label>
+    <button id="next" aria-label="Nächster Tag">›</button>
+  </nav>
+
+  <p id="lock" hidden>Nur Ansicht: Dieser Monat ist schreibgeschützt.</p>
+
+  <div class="row">
+    <div class="tf"><span>Arbeitsbeginn</span><div class="tsel" id="start"></div></div>
+    <div class="tf"><span>Arbeitsende</span><div class="tsel" id="end"></div></div>
+  </div>
+  <p id="net" class="net"></p>
+
+  <label>Ausgeführte Tätigkeiten<textarea id="tasks" rows="4"></textarea></label>
+  <label>Anmerkung (z. B. Urlaub, Feiertag, Krankheit)<input id="note" type="text"></label>
+
+  <label class="chk"><input id="rkPossible" type="checkbox"> Reisekosten möglich</label>
+  <label class="chk"><input id="rkRequested" type="checkbox"> Reisekosten angefordert</label>
+
+  <section class="month">
+    <p id="monthLabel"></p>
+    <p id="monthSum"></p>
+    <button id="pdf">Monat als PDF ausgeben</button>
+  </section>
+</div>
+<div id="printArea"></div>
+<script src="app.js"></script>
+</body>
+</html>
