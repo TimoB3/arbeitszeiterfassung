@@ -4,7 +4,16 @@ const KEY = 'az_days_v1', NAME_KEY = 'az_name';
 const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 let days = {};
 try { days = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { days = {}; }
-const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(days)); } catch (e) {} };
+function setStatus(ok, msg) { const s = $('stor'); s.textContent = msg; s.className = 'stor' + (ok ? '' : ' err'); }
+const NOSTORE = '⚠ Speichern nicht möglich! In Safari privaten Modus beenden und „Alle Cookies blockieren“ ausschalten.';
+const persist = () => {
+  try {
+    const v = JSON.stringify(days);
+    localStorage.setItem(KEY, v);
+    if (localStorage.getItem(KEY) !== v) throw new Error('verify');
+    setStatus(true, 'Gespeichert ✓ ' + new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'}));
+  } catch (e) { setStatus(false, NOSTORE); }
+};
 
 const pad = n => String(n).padStart(2, '0');
 const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
@@ -22,7 +31,7 @@ function netMinutes(day) {
   if (s === null || e === null) return null;
   let dur = e - s;
   if (dur <= 0) dur += 1440; // Ende nach Mitternacht
-  return Math.max(0, dur - (dur >= 600 ? 45 : 30));
+  return Math.max(0, dur - (dur >= 540 ? 45 : 30));
 }
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
@@ -156,5 +165,7 @@ $('pdf').onclick = () => {
   buildPdf(); window.print();
 };
 
+try { localStorage.setItem('az_test', '1'); localStorage.removeItem('az_test'); } catch (e) { setStatus(false, NOSTORE); }
+if (navigator.storage && navigator.storage.persist) { try { navigator.storage.persist(); } catch (e) {} }
 render();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');

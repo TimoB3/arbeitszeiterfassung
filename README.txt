@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.2
+ARBEITSZEITERFASSUNG (PWA) - Version 2.3
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -22,3 +22,6 @@ Name: Zahnrad oben rechts.
 - Neue Spalte "Stunden" (Nettozeit, z. B. 8,75h) zwischen Ende und Tätigkeiten.
 - Anmerkungen und lange Tätigkeiten werden automatisch verkleinert, bis sie in die Zeile passen.
 Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächliche Größe").
+
+Änderungen 2.3:
+- Statuszeile unter dem Titel: "Gespeichert ✓ hh:mm" nach jeder Eingabe, rote Warnung falls der Browser das Speichern verweigert.
