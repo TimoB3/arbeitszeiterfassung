@@ -31,8 +31,15 @@ function netMinutes(day) {
   if (s === null || e === null) return null;
   let dur = e - s;
   if (dur <= 0) dur += 1440; // Ende nach Mitternacht
-  const pause = dur >= 540 ? 45 : (dur > 360 ? 30 : 0);
-  return Math.max(0, dur - pause);
+  // 1. Pause berechnen
+  const berechnetePause = dur >= 540 ? 45 : (dur > 360 ? 30 : 0);
+  
+  // 2. WICHTIG: Die Pause in das day-Objekt zurückschreiben, damit das System sie übernimmt!
+  day.pause = berechnetePause; 
+  
+  // 3. Ergebnis zurückgeben
+  return Math.max(0, dur - berechnetePause);
+}
 }
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
