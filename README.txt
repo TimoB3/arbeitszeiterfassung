@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.6
+ARBEITSZEITERFASSUNG (PWA) - Version 2.7
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -42,3 +42,6 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
 - "Beleg abgegeben?" nur wählbar, wenn "Reisekosten ?" gesetzt ist; "Betrag erhalten ?" nur, wenn beide davor gesetzt sind.
 - Wird ein Feld abgewählt, werden die folgenden automatisch ebenfalls abgewählt.
 - Reisekosten-Angaben erscheinen weiterhin nicht im PDF.
+
+Änderungen 2.7:
+- Neues App-Symbol (Uhr auf blauem Grund). Auf dem iPhone ändert sich das Symbol erst, wenn die App neu zum Home-Bildschirm hinzugefügt wird (vorher Datensicherung machen!).
