@@ -167,6 +167,61 @@ $('pdf').onclick = () => {
   buildPdf(); window.print();
 };
 
+/* ---------- Datensicherung ---------- */
+const BK_KEY = 'az_backup';
+const ISO_RE = /^\d{4}-\d{2}-\d{2}$/, TIME_RE = /^\d{2}:\d{2}$/;
+function sanitizeDay(x) {
+  if (!x || typeof x !== 'object') return null;
+  const s = v => typeof v === 'string' ? v : '';
+  return { start: TIME_RE.test(x.start) ? x.start : '', end: TIME_RE.test(x.end) ? x.end : '', tasks: s(x.tasks), note: s(x.note),
+           rkPossible: !!x.rkPossible, rkRequested: !!(x.rkPossible && x.rkRequested) };
+}
+function showLastBackup() {
+  const t = localStorage.getItem(BK_KEY);
+  $('lastBk').textContent = t ? 'Letzte Sicherung: ' + fmtDate(new Date(t)) : 'Noch keine Sicherung erstellt.';
+}
+function markBackup() { try { localStorage.setItem(BK_KEY, new Date().toISOString()); } catch (e) {} showLastBackup(); }
+
+$('btnExport').onclick = async () => {
+  const data = JSON.stringify({ app: 'arbeitszeit', version: 1, exported: new Date().toISOString(), name: localStorage.getItem(NAME_KEY) || '', days }, null, 1);
+  const fname = 'arbeitszeit_backup_' + iso(new Date()) + '.json';
+  const file = new File([data], fname, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: fname });
+      markBackup(); setStatus(true, 'Sicherung weitergegeben ✓'); return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file); a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  markBackup(); setStatus(true, 'Sicherung erstellt ✓');
+};
+$('btnImport').onclick = () => $('fileImport').click();
+$('fileImport').onchange = e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const o = JSON.parse(r.result);
+      if (!o || o.app !== 'arbeitszeit' || !o.days || typeof o.days !== 'object') throw new Error('format');
+      const inc = {};
+      for (const k in o.days) { if (ISO_RE.test(k)) { const d = sanitizeDay(o.days[k]); if (d) inc[k] = d; } }
+      const n = Object.keys(inc).length;
+      if (!confirm(n + ' Tage aus der Sicherung einlesen?\nEinträge mit gleichem Datum werden überschrieben, alle anderen bleiben erhalten.')) return;
+      days = Object.assign({}, days, inc);
+      persist();
+      if (typeof o.name === 'string' && o.name && !localStorage.getItem(NAME_KEY)) { try { localStorage.setItem(NAME_KEY, o.name); } catch (x) {} $('name').value = o.name; }
+      render();
+      setStatus(true, n + ' Tage eingelesen ✓');
+    } catch (x) { setStatus(false, '⚠ Datei nicht lesbar: keine gültige Sicherung.'); }
+  };
+  r.readAsText(f);
+};
+showLastBackup();
+
 try { localStorage.setItem('az_test', '1'); localStorage.removeItem('az_test'); } catch (e) { setStatus(false, NOSTORE); }
 if (navigator.storage && navigator.storage.persist) { try { navigator.storage.persist(); } catch (e) {} }
 render();

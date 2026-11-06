@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.4
+ARBEITSZEITERFASSUNG (PWA) - Version 2.5
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -30,3 +30,9 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
 - Pausenabzug: bis 6 Std. keine Pause; über 6 und unter 9 Std. 30 Min; über 9 Std. 45 Min (genau 9 Std. = 30 Min).
 - PDF: Summenzeile unten mit der Netto-Gesamtzeit in der Spalte Stunden; weiterhin eine A4-Seite.
 - Doppeltipp-Zoom beim schnellen Klicken auf Vor/Zurück unterbunden.
+
+Änderungen 2.5:
+- Datensicherung (Zahnrad oben rechts): "Sicherung speichern" erstellt eine Datei arbeitszeit_backup_JJJJ-MM-TT.json
+  (am iPhone über das Teilen-Menü, z. B. in "Dateien" sichern). "Sicherung einlesen" lädt sie wieder; gleiche Tage werden überschrieben, alle anderen bleiben.
+- Beschriftung "Reisekosten ?".
+- Service Worker lädt Dateien zuerst aus dem Netz (neue Versionen kommen ohne Cache-Probleme an), offline weiter aus dem Zwischenspeicher.

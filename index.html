@@ -21,6 +21,13 @@
     <label>Name (für das PDF)
       <input id="name" type="text" autocomplete="name">
     </label>
+    <div class="bk">
+      <b>Datensicherung</b>
+      <p id="lastBk" class="small"></p>
+      <button id="btnExport" type="button">Sicherung speichern</button>
+      <button id="btnImport" type="button">Sicherung einlesen</button>
+      <input id="fileImport" type="file" accept=".json,application/json" hidden>
+    </div>
   </section>
 
   <nav>

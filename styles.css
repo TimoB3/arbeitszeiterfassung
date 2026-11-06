@@ -6,6 +6,9 @@ body{font-family:-apple-system,system-ui,sans-serif;margin:0;background:#f3f4f6;
 header{display:flex;justify-content:space-between;align-items:center}
 .stor{font-size:.85rem;color:#166534;margin:.2rem 0;min-height:1.1em}
 .stor.err{color:#b91c1c;font-weight:600;font-size:1rem}
+.bk{margin:.8rem 0 .4rem;padding-top:.6rem;border-top:1px solid #ddd}
+.bk button{width:100%;margin-top:.5rem}
+.small{font-size:.8rem;color:#555;margin:.2rem 0}
 h1{font-size:1.4rem;margin:.3rem 0}
 label{display:block;font-size:.85rem;color:#444;margin:.7rem 0 0}
 input[type=text],input[type=time],input[type=date],textarea{width:100%;font-size:1.1rem;padding:.6rem;border:1px solid #bbb;border-radius:8px;background:#fff;margin-top:.25rem;font-family:inherit}
