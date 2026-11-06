@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.7
+ARBEITSZEITERFASSUNG (PWA) - Version 2.8
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -45,3 +45,6 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
 
 Änderungen 2.7:
 - Neues App-Symbol (Uhr auf blauem Grund). Auf dem iPhone ändert sich das Symbol erst, wenn die App neu zum Home-Bildschirm hinzugefügt wird (vorher Datensicherung machen!).
+
+Änderungen 2.8:
+- Logo-Dateien heißen jetzt logo-180.png und logo-512.png (neuer Name, damit das iPhone nicht das alte Symbol aus dem Zwischenspeicher nimmt). Die alten icon-*.png können gelöscht werden.
