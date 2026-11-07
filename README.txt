@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.8
+ARBEITSZEITERFASSUNG (PWA) - Version 2.9
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -48,3 +48,7 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
 
 Änderungen 2.8:
 - Logo-Dateien heißen jetzt logo-180.png und logo-512.png (neuer Name, damit das iPhone nicht das alte Symbol aus dem Zwischenspeicher nimmt). Die alten icon-*.png können gelöscht werden.
+
+Änderungen 2.9:
+- PDF wird jetzt von der App selbst erzeugt (neue Datei pdf.js) statt über den Druckdialog. Das funktioniert auch in der installierten iPhone-App.
+- Am iPhone öffnet sich das Teilen-Menü (In Dateien sichern, Mail, AirDrop, Drucken); am PC wird die Datei heruntergeladen: Arbeitszeiterfassung_JJJJ-MM.pdf.

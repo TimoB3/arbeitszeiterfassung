@@ -125,41 +125,37 @@ function save() {
 
 function shift(delta) { current = new Date(current.getFullYear(), current.getMonth(), current.getDate() + delta); render(); }
 
-/* ---------- PDF (Druckansicht, im Druckdialog "Als PDF speichern") ---------- */
-function buildPdf() {
+/* ---------- PDF (eigener Erzeuger, kein Druckdialog) ---------- */
+function pdfData() {
   const y = current.getFullYear(), m = current.getMonth();
-  const name = localStorage.getItem(NAME_KEY) || '';
   const n = new Date(y, m + 1, 0).getDate();
-  const rowH = ((297 - 20 - 18 - 7 - 1.5) / (n + 1)).toFixed(3) + 'mm';
-  const cell = (cls, txt, span) => '<td' + (span ? ' colspan="' + span + '"' : '') + '><div class="c ' + cls + '" style="height:' + rowH + '"><span class="fit">' + txt + '</span></div></td>';
-  let rows = '', sumMin = 0;
+  const rows = []; let sumMin = 0;
   for (let d = 1; d <= n; d++) {
     const date = new Date(y, m, d), dow = date.getDay(), day = days[iso(date)] || {};
-    const tasks = esc(day.tasks).replace(/\s*\n+\s*/g, '; ');
-    let mid = '', hrs = '', tk = '';
-    if (dow === 6 || dow === 0) {
-      mid = cell('nw', dow === 6 ? 'SAMSTAG' : 'SONNTAG', 2); hrs = cell('', '');
-    } else {
-      tk = tasks;
-      const net = netMinutes(day);
-      if (day.start && day.end) { mid = cell('', esc(day.start)) + cell('', esc(day.end)); hrs = cell('', net === null ? '' : fmtH(net)); sumMin += net || 0; }
-      else if (day.note) { mid = cell('nw', esc(day.note), 2); hrs = cell('', ''); }
-      else { mid = cell('', '') + cell('', ''); hrs = cell('', ''); }
-    }
-    rows += '<tr>' + cell('', d + '.') + mid + hrs + cell('tk', tk) + '</tr>';
+    const tasks = String(day.tasks || '').replace(/\s*\n+\s*/g, '; ');
+    if (dow === 6 || dow === 0) { rows.push({ d, kind: 'weekend', label: dow === 6 ? 'SAMSTAG' : 'SONNTAG' }); continue; }
+    const net = netMinutes(day);
+    if (day.start && day.end) { sumMin += net || 0; rows.push({ d, kind: 'times', start: day.start, end: day.end, hours: net === null ? '' : fmtH(net), tasks }); }
+    else if (day.note) rows.push({ d, kind: 'note', note: day.note, tasks });
+    else rows.push({ d, kind: 'empty', tasks });
   }
-  rows += '<tr class="sumrow">' + cell('', '') + cell('b nw', 'SUMME', 2) + cell('b', fmtH(sumMin)) + cell('tk', '') + '</tr>';
-  const th = t => '<th><div class="c" style="height:7mm"><b>' + t + '</b></div></th>';
-  $('printArea').innerHTML =
-    '<div class="head"><h1>Arbeitszeiterfassung</h1><p>Monat: ' + MONTHS[m] + ' ' + y + '</p><p>Name: ' + esc(name) + '</p></div>' +
-    '<table><colgroup><col style="width:12mm"><col style="width:20mm"><col style="width:20mm"><col style="width:20mm"><col></colgroup>' +
-    '<thead><tr>' + th('Tag') + th('Beginn') + th('Ende') + th('Stunden') + th('Ausgeführte Tätigkeiten') + '</tr></thead><tbody>' + rows + '</tbody></table>';
-  // Schrift automatisch verkleinern, bis der Text in die Zelle passt
-  document.querySelectorAll('#printArea tbody .fit').forEach(s => {
-    const p = s.parentElement; let fs = 9;
-    s.style.fontSize = fs + 'pt';
-    while (fs > 4 && (s.scrollWidth > s.clientWidth + 1 || s.offsetHeight > p.clientHeight)) { fs -= 0.25; s.style.fontSize = fs + 'pt'; }
-  });
+  return { monthLabel: MONTHS[m] + ' ' + y, name: localStorage.getItem(NAME_KEY) || '', rows, sum: fmtH(sumMin), fname: 'Arbeitszeiterfassung_' + y + '-' + pad(m + 1) + '.pdf' };
+}
+
+async function exportPdf() {
+  try {
+    const o = pdfData();
+    const bytes = AZPDF.build(o);
+    const file = new File([bytes], o.fname, { type: 'application/pdf' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: o.fname }); setStatus(true, 'PDF erstellt ✓'); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file); a.download = o.fname;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 20000);
+    setStatus(true, 'PDF erstellt ✓');
+  } catch (e) { setStatus(false, '⚠ PDF konnte nicht erstellt werden: ' + (e && e.message ? e.message : e)); }
 }
 
 /* ---------- Events ---------- */
@@ -173,8 +169,8 @@ $('btnSettings').onclick = () => { $('settings').hidden = !$('settings').hidden;
 $('name').value = localStorage.getItem(NAME_KEY) || '';
 $('name').addEventListener('input', e => { try { localStorage.setItem(NAME_KEY, e.target.value); } catch (x) {} });
 $('pdf').onclick = () => {
-  if (!localStorage.getItem(NAME_KEY)) { $('settings').hidden = false; $('name').focus(); }
-  buildPdf(); window.print();
+  if (!localStorage.getItem(NAME_KEY)) { $('settings').hidden = false; }
+  exportPdf();
 };
 
 /* ---------- Datensicherung ---------- */
