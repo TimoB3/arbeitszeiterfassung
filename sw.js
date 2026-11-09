@@ -1,5 +1,5 @@
 // Version bei Bedarf erhöhen; mit "Netzwerk zuerst" kommen Änderungen aber auch so an.
-const CACHE = 'az-v2-9';
+const CACHE = 'az-v3-0';
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'pdf.js', 'manifest.webmanifest', 'logo-180.png', 'logo-512.png'];
 
 self.addEventListener('install', e => {

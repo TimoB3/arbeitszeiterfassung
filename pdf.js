@@ -105,6 +105,7 @@
       } else if (r.kind === 'note') {
         cell(r.note, colX[1], colW[1] + colW[2], top, rowH, {});
       }
+      if (r.kind === 'sum') cell('Sollstunden gesamt: ' + opts.soll, colX[4], colW[4], top, rowH, { bold: true, left: true });
       if (r.kind !== 'sum' && r.kind !== 'weekend') cell(r.tasks, colX[4], colW[4], top, rowH, { wrap: true, left: true });
       if (r.kind === 'sum' || r.kind === 'weekend' || r.kind === 'note') gaps.push([top, top - rowH]);
       top -= rowH;

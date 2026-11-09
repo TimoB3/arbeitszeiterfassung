@@ -46,6 +46,7 @@
 
   <label>Ausgeführte Tätigkeiten<textarea id="tasks" rows="4"></textarea></label>
   <label>Anmerkung (z. B. Urlaub, Feiertag, Krankheit)<input id="note" type="text"></label>
+  <label id="sollWrap" hidden>Sollstunden an diesem Tag (z. B. 8 oder 4,5)<input id="soll" type="text" inputmode="decimal" placeholder="0"></label>
 
   <label class="chk"><input id="rkPossible" type="checkbox"> Reisekosten ?</label>
   <label class="chk"><input id="rkRequested" type="checkbox"> Beleg abgegeben?</label>
@@ -54,6 +55,7 @@
   <section class="month">
     <p id="monthLabel"></p>
     <p id="monthSum"></p>
+    <p id="monthSoll"></p>
     <button id="pdf">Monat als PDF ausgeben</button>
   </section>
 </div>

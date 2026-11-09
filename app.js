@@ -36,6 +36,24 @@ function netMinutes(day) {
 }
 const fmt = m => Math.floor(m / 60) + ' Std. ' + pad(m % 60) + ' Min. (' + fmtH(m) + ')';
 
+// Sollstunden: Wochentag 8 h; mit Anmerkung = selbst eingetragener Wert; Sa/So = 0
+const parseH = s => { const v = parseFloat(String(s || '').replace(',', '.')); return isFinite(v) && v > 0 ? v : 0; };
+function sollFor(date, day) {
+  const dow = date.getDay();
+  if (dow === 0 || dow === 6) return 0;
+  return String((day && day.note) || '').trim() ? parseH(day.soll) : 8;
+}
+function sollSum(y, m) {
+  let s = 0;
+  for (let d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) { const dt = new Date(y, m, d); s += sollFor(dt, days[iso(dt)]); }
+  return s;
+}
+function updateSoll(ed) {
+  const wd = current.getDay() !== 0 && current.getDay() !== 6;
+  $('sollWrap').hidden = !(wd && $('note').value.trim());
+  $('soll').disabled = !ed;
+}
+
 function isEditable(d) {
   const diff = monthIdx(new Date()) - monthIdx(d);
   return diff >= 0 && diff <= 2;
@@ -80,6 +98,7 @@ function render() {
   $('end').set(day.end || '');
   $('tasks').value = day.tasks || '';
   $('note').value = day.note || '';
+  $('soll').value = day.soll || '';
   $('rkPossible').checked = !!day.rkPossible;
   $('rkRequested').checked = !!(day.rkPossible && day.rkRequested);
   $('rkReceived').checked = !!(day.rkPossible && day.rkRequested && day.rkReceived);
@@ -88,6 +107,7 @@ function render() {
   ['tasks','note','rkPossible'].forEach(id => $(id).disabled = !ed);
   $('start').dis(!ed); $('end').dis(!ed);
   syncRk(ed);
+  updateSoll(ed);
   const n = netMinutes(day);
   $('net').textContent = n === null ? '' : 'Nettoarbeitszeit: ' + fmt(n);
   renderMonth();
@@ -102,6 +122,7 @@ function renderMonth() {
   }
   $('monthLabel').textContent = MONTHS[m] + ' ' + y;
   $('monthSum').textContent = 'Summe Nettoarbeitszeit: ' + fmt(sum);
+  $('monthSoll').textContent = 'Summe Sollstunden: ' + fmtH(sollSum(y, m) * 60);
 }
 
 function save() {
@@ -109,11 +130,13 @@ function save() {
   const day = {
     start: $('start').get(), end: $('end').get(),
     tasks: $('tasks').value, note: $('note').value,
+    soll: ($('note').value.trim() && current.getDay() !== 0 && current.getDay() !== 6) ? $('soll').value.trim() : '',
     rkPossible: $('rkPossible').checked,
     rkRequested: $('rkPossible').checked && $('rkRequested').checked,
     rkReceived: $('rkPossible').checked && $('rkRequested').checked && $('rkReceived').checked
   };
   syncRk(true);
+  updateSoll(true);
   const empty = !day.start && !day.end && !day.tasks && !day.note && !day.rkPossible;
   const key = iso(current);
   if (empty) delete days[key]; else days[key] = day;
@@ -139,7 +162,7 @@ function pdfData() {
     else if (day.note) rows.push({ d, kind: 'note', note: day.note, tasks });
     else rows.push({ d, kind: 'empty', tasks });
   }
-  return { monthLabel: MONTHS[m] + ' ' + y, name: localStorage.getItem(NAME_KEY) || '', rows, sum: fmtH(sumMin), fname: 'Arbeitszeiterfassung_' + y + '-' + pad(m + 1) + '.pdf' };
+  return { monthLabel: MONTHS[m] + ' ' + y, name: localStorage.getItem(NAME_KEY) || '', rows, sum: fmtH(sumMin), soll: fmtH(sollSum(y, m) * 60), fname: 'Arbeitszeiterfassung_' + y + '-' + pad(m + 1) + '.pdf' };
 }
 
 async function exportPdf() {
@@ -159,7 +182,7 @@ async function exportPdf() {
 }
 
 /* ---------- Events ---------- */
-['tasks','note'].forEach(id => $(id).addEventListener('input', save));
+['tasks','note','soll'].forEach(id => $(id).addEventListener('input', save));
 $('date').addEventListener('click', () => { try { $('date').showPicker(); } catch (e) {} });
 ['rkPossible','rkRequested','rkReceived'].forEach(id => $(id).addEventListener('change', save));
 $('prev').onclick = () => shift(-1);
@@ -179,7 +202,7 @@ const ISO_RE = /^\d{4}-\d{2}-\d{2}$/, TIME_RE = /^\d{2}:\d{2}$/;
 function sanitizeDay(x) {
   if (!x || typeof x !== 'object') return null;
   const s = v => typeof v === 'string' ? v : '';
-  return { start: TIME_RE.test(x.start) ? x.start : '', end: TIME_RE.test(x.end) ? x.end : '', tasks: s(x.tasks), note: s(x.note),
+  return { start: TIME_RE.test(x.start) ? x.start : '', end: TIME_RE.test(x.end) ? x.end : '', tasks: s(x.tasks), note: s(x.note), soll: s(x.soll).slice(0, 10),
            rkPossible: !!x.rkPossible, rkRequested: !!(x.rkPossible && x.rkRequested), rkReceived: !!(x.rkPossible && x.rkRequested && x.rkReceived) };
 }
 function showLastBackup() {

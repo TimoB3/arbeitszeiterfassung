@@ -1,4 +1,4 @@
-ARBEITSZEITERFASSUNG (PWA) - Version 2.9
+ARBEITSZEITERFASSUNG (PWA) - Version 3.0
 
 Neu in 2.1: Automatische Wochenend-Kennzeichnung im PDF
 - Samstage erscheinen im PDF automatisch als "SAMSTAG", Sonntage als "SONNTAG".
@@ -52,3 +52,8 @@ Tipp im Druckdialog: "Kopf- und Fußzeilen" aus und Skalierung 100 % ("Tatsächl
 Änderungen 2.9:
 - PDF wird jetzt von der App selbst erzeugt (neue Datei pdf.js) statt über den Druckdialog. Das funktioniert auch in der installierten iPhone-App.
 - Am iPhone öffnet sich das Teilen-Menü (In Dateien sichern, Mail, AirDrop, Drucken); am PC wird die Datei heruntergeladen: Arbeitszeiterfassung_JJJJ-MM.pdf.
+
+Änderungen 3.0:
+- Sollstunden: Jeder Wochentag zählt 8 h; Samstag/Sonntag 0 h.
+- Hat ein Wochentag eine Anmerkung, erscheint hinter der Anmerkung das Feld "Sollstunden an diesem Tag". Dort trägst du den Sollwert selbst ein (z. B. 0, 4,5 oder 8). Leer = 0 h.
+- Die Summe der Sollstunden steht in der App und im PDF in der letzten Zeile (rechts neben den Gesamtstunden). Einzelne Sollwerte erscheinen nicht im PDF.
